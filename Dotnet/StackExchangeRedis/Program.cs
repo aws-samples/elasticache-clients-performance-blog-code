@@ -101,7 +101,8 @@ namespace StackExchangeRedis
         {
             Debug.Assert(totalCommands % numThreads == 0, "Error totalCommands not divisible by numThreads");
             Warmup();
-            Console.WriteLine($"Starting Async Multiplexor Test, Num Threads = {numThreads}");
+            string api = worker.Method.Name == "SyncWorkerThread" ? "Sync" : "Async";
+            Console.WriteLine($"Starting {api} Multiplexor Test, Num Threads = {numThreads}");
             long commandsPerThread = totalCommands / numThreads;
             Stopwatch timer = new Stopwatch();
             timer.Restart();
