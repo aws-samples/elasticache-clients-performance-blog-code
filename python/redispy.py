@@ -54,7 +54,7 @@ def pipeline_test(pipeline_size, total_commands, with_hiredis=True, transaction=
         f"total_commands = {total_commands}, with_hiredis = {with_hiredis}, transaction = {transaction})"
     )
     if not with_hiredis:
-        subprocess.run("pip uninstall hiredis")
+        subprocess.run("pip uninstall hiredis", shell=True)
     num_pipelines = total_commands // pipeline_size
     start = time.monotonic()
     for _ in range(num_pipelines):
@@ -68,7 +68,7 @@ def pipeline_test(pipeline_size, total_commands, with_hiredis=True, transaction=
         pipe.execute()
     duration = time.monotonic() - start
     if not with_hiredis:
-        subprocess.run("pip install hiredis")
+        subprocess.run("pip install hiredis", shell=True)
     print(f"Pipeline Size: {pipeline_size}, TPS: {total_commands/duration:.2f}")
 
 
@@ -149,21 +149,21 @@ def newconnection_percommand_test(total_commands):
 
 # Pipeline tests with hiredis installed
 pipeline_test(3, 6000000)
-pipeline_test(10, 30000000)
-pipeline_test(100, 45000000)
-pipeline_test(1000, 60000000)
+pipeline_test(10, 10000000)
+pipeline_test(100, 20000000)
+pipeline_test(1000, 20000000)
 
 # Pipeline tests without hiredis installed
 pipeline_test(3, 6000000, with_hiredis=False)
-pipeline_test(10, 30000000, with_hiredis=False)
-pipeline_test(100, 45000000, with_hiredis=False)
-pipeline_test(1000, 60000000, with_hiredis=False)
+pipeline_test(10, 10000000, with_hiredis=False)
+pipeline_test(100, 20000000, with_hiredis=False)
+pipeline_test(1000, 20000000, with_hiredis=False)
 
 # Pipeline tests with transcation set to False
 pipeline_test(3, 6000000, transaction=False)
-pipeline_test(10, 30000000, transaction=False)
-pipeline_test(100, 45000000, transaction=False)
-pipeline_test(1000, 60000000, transaction=False)
+pipeline_test(10, 10000000, transaction=False)
+pipeline_test(100, 20000000, transaction=False)
+pipeline_test(1000, 20000000, transaction=False)
 
 # Multithreaded tests
 multithreaded_test(2, 5000000)
@@ -173,10 +173,10 @@ multithreaded_test(10, 9000000)
 # Multiprocess tests
 multiprocess_test(2, 9000000)
 multiprocess_test(3, 9000000)
-multiprocess_test(10, 30000000)
-multiprocess_test(20, 60000000)
-multiprocess_test(30, 60000000)
-multiprocess_test(100, 60000000)
+multiprocess_test(10, 15000000)
+multiprocess_test(20, 15000000)
+multiprocess_test(30, 15000000)
+multiprocess_test(100, 15000000)
 
 # New connection for every command tests
 newconnection_percommand_test(5000)
