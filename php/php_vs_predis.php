@@ -36,7 +36,8 @@ function shouldGet()
     return mt_rand() / mt_getrandmax() < PROB_GET;
 }
 
-function initTest($host, $port) {
+function initTest($host, $port)
+{
     global $predis;
     global $phpredis;
     $predis = new Predis\Client([

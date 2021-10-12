@@ -168,25 +168,25 @@ tests.push(() => boundedConcurrencyTest(10000, 1, 3000000));
 
 // Batch Tests
 tests.push(warmup);
-tests.push(() => batchTest(2, 1500000));
+tests.push(() => batchTest(2, 3000000));
 tests.push(warmup);
-tests.push(() => batchTest(3, 1500000));
+tests.push(() => batchTest(3, 3000000));
 tests.push(warmup);
-tests.push(() => batchTest(10, 1500000));
+tests.push(() => batchTest(10, 3000000));
 tests.push(warmup);
-tests.push(() => batchTest(100, 1500000));
+tests.push(() => batchTest(100, 9000000));
 tests.push(warmup);
-tests.push(() => batchTest(1000, 1500000));
+tests.push(() => batchTest(1000, 9000000));
 
 // Multi Client Round Robin Tests
 tests.push(warmup);
-tests.push(() => boundedConcurrencyTest(1000, 2, 1500000));
+tests.push(() => boundedConcurrencyTest(1000, 2, 3000000));
 tests.push(warmup);
-tests.push(() => boundedConcurrencyTest(1000, 3, 1500000));
+tests.push(() => boundedConcurrencyTest(1000, 3, 3000000));
 tests.push(warmup);
-tests.push(() => boundedConcurrencyTest(1000, 10, 1500000));
+tests.push(() => boundedConcurrencyTest(1000, 10, 3000000));
 tests.push(warmup);
-tests.push(() => boundedConcurrencyTest(1000, 100, 1500000));
+tests.push(() => boundedConcurrencyTest(1000, 100, 3000000));
 
 // Initialize Clients and Run Script
 for (let i = 0; i < 100; i++) {

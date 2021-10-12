@@ -194,7 +194,7 @@ namespace StackExchangeRedis
         }
 
 
-        private static ConnectionMultiplexer cm = ConnectionMultiplexer.Connect($"{Host}, allowAdmin=true");
+        private static ConnectionMultiplexer cm = ConnectionMultiplexer.Connect($"{Host}, allowAdmin=true, syncTimeout=30000");
         private static IServer server = cm.GetServer(Host, 6379);
         private static IDatabase db = cm.GetDatabase();
         private static System.Random rndObj = new System.Random();
