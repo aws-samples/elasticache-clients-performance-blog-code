@@ -97,7 +97,7 @@ function pipelineTest($totalCommands, $pipelineSize, $client)
         "Error totalCommands not divisible by pipelineSize\n"
     );
     warmup();
-    printf("starting predis pipeline test. Pipeline size: %d\n", $pipelineSize);
+    printf("starting %s pipeline test. Pipeline size: %d\n",$client, $pipelineSize);
     $numPipelines = $totalCommands / $pipelineSize;
     $start = microtime(true);
     for ($i = 0; $i < $numPipelines; $i++) {
