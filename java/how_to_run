@@ -1,0 +1,4 @@
+mvn package
+
+java -cp target/lettuce-1.jar com.amazon.redisbenchmark.lettuce.MainLettuce
+java -cp target/lettuce-1.jar com.amazon.redisbenchmark.lettuce.MainJedis
