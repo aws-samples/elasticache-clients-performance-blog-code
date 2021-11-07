@@ -13,7 +13,7 @@ import redis.clients.jedis.Transaction;
 public class MainJedis {
 
   public static final String HOST =
-    "redistestclients.p2flvq.ng.0001.use1.cache.amazonaws.com";
+    "localhost";
   public static final int PORT = 6379;
   public static final int NUM_GET_KEYS = 3750000;
   public static final int NUM_SET_KEYS = (int) (NUM_GET_KEYS * 0.8);
@@ -55,6 +55,7 @@ public class MainJedis {
   }
 
   private static void warmup() {
+    System.out.println("Warmup started");
     try (Jedis jedis = new Jedis(HOST, PORT, 15000, 15000))
     {
       jedis.connect();
@@ -196,7 +197,6 @@ public class MainJedis {
 
   private static JedisPoolConfig buildPoolConfig() {
     final JedisPoolConfig poolConfig = new JedisPoolConfig();
-    poolConfig.setMinIdle(16);
     poolConfig.setTestOnBorrow(false);
     poolConfig.setTestOnReturn(false);
     poolConfig.setTestWhileIdle(false);

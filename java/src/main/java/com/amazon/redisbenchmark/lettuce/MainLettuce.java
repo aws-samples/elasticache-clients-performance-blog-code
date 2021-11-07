@@ -21,7 +21,7 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 public class MainLettuce {
 
   public static final String HOST =
-    "redistestclients.p2flvq.ng.0001.use1.cache.amazonaws.com";
+    "localhost";
   public static final int PORT = 6379;
   public static final int NUM_GET_KEYS = 3750000;
   public static final int NUM_SET_KEYS = (int) (NUM_GET_KEYS * 0.8);
