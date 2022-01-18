@@ -1,6 +1,6 @@
 ## Optimize Redis client performance for Amazon ElastiCache
 
-This repo hosts samples code used for the blog post:
+This repo hosts code samples used for the blog post:
 
 TODO add link
 
