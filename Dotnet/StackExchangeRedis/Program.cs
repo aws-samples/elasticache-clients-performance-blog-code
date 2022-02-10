@@ -202,18 +202,14 @@ namespace StackExchangeRedis
         static public void Main(string[] args)
         {
             // sync multiplexor tests
-            MultiplexorTest(1, 30000, SyncWorkerThread);
-            MultiplexorTest(2, 30000, SyncWorkerThread);
-            MultiplexorTest(10, 120000, SyncWorkerThread);
-            MultiplexorTest(20, 120000, SyncWorkerThread);
-            MultiplexorTest(30, 120000, SyncWorkerThread);
-            MultiplexorTest(40, 120000, SyncWorkerThread);
-            MultiplexorTest(50, 120000, SyncWorkerThread);
-            MultiplexorTest(60, 120000, SyncWorkerThread);
+            MultiplexorTest(10, 15000000, SyncWorkerThread);
+            MultiplexorTest(20, 15000000, SyncWorkerThread);
+            MultiplexorTest(30, 15000000, SyncWorkerThread);
+            MultiplexorTest(40, 25000000, SyncWorkerThread);
+            MultiplexorTest(50, 30000000, SyncWorkerThread);
+            MultiplexorTest(60, 30000000, SyncWorkerThread);
 
             // async multiplexor tests
-            MultiplexorTest(1, 3000000, AsyncWorkerThread);
-            MultiplexorTest(2, 3000000, AsyncWorkerThread);
             MultiplexorTest(10, 15000000, AsyncWorkerThread);
             MultiplexorTest(20, 15000000, AsyncWorkerThread);
             MultiplexorTest(30, 15000000, AsyncWorkerThread);
@@ -227,7 +223,7 @@ namespace StackExchangeRedis
             PipelineTest(100, 40000000);
             PipelineTest(1000, 60000000);
 
-            // batching tests
+            // // batching tests
             BatchTest(3, 30000);
             BatchTest(10, 100000);
             BatchTest(100, 400000);
