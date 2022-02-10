@@ -25,7 +25,7 @@ Steps to Reproduce Result:
 7) Compile the tests by executing: "mvn package" from the java folder.
 8) Run the tests by executing: 
     * For Lettuce: "java -cp target/lettuce-1.jar com.amazon.redisbenchmark.lettuce.MainLettuce"
-    * For Lettuce: "java -cp target/lettuce-1.jar com.amazon.redisbenchmark.lettuce.MainJedis"
+    * For Lettuce: "java -cp target/lettuce-1.jar com.amazon.redisbenchmark.jedis.MainJedis"
 
 Cleaning Up:
 Please make you sure you terminate the EC2 instance and delete the Elasticache cluster you created.

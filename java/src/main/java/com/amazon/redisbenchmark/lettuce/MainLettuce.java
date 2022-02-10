@@ -4,7 +4,6 @@ import io.lettuce.core.LettuceFutures;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.RedisURI;
-import io.lettuce.core.TransactionResult;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -252,8 +251,7 @@ public class MainLettuce {
 
   public enum PipelineMode {
     PipelineBatching,
-    PipelineTransaction,
-    PipelineOnly,
+    PipelineOnly
   }
 
   public static void scenarioPipelineTypes(PipelineMode pipelineMode) {
@@ -276,34 +274,21 @@ public class MainLettuce {
       for (int i = 0; i < COMMANDS_PER_TEST / PIPELINE_SIZE; ++i) {
         List<RedisFuture<String>> futures = new ArrayList<RedisFuture<String>>();
 
-        if (PipelineMode.PipelineTransaction == pipelineMode) {
-          futures.add(commands.multi());
-        }
-
         for (int ii = 0; ii < PIPELINE_SIZE; ++ii) {
           addAsyncQueryToConnection(r, futures, commands);
         }
-
-        if (PipelineMode.PipelineTransaction == pipelineMode) {
-          try {
-            RedisFuture<TransactionResult> exec = commands.exec();
-            exec.get(5, TimeUnit.SECONDS);
-          } catch (Exception e) {
-            System.out.println("Running Transaction threw: " + e);
-          }
-        } else {
-          if (PipelineMode.PipelineBatching == pipelineMode) {
-            // write all commands to the transport layer
-            commands.flushCommands();
-          }
-
-          // synchronization example: Wait until all futures complete
-          LettuceFutures.awaitAll(
-            5,
-            TimeUnit.SECONDS,
-            futures.toArray(new RedisFuture[futures.size()])
-          );
+        
+        if (PipelineMode.PipelineBatching == pipelineMode) {
+          // write all commands to the transport layer
+          commands.flushCommands();
         }
+
+        // synchronization example: Wait until all futures complete
+        LettuceFutures.awaitAll(
+          5,
+          TimeUnit.SECONDS,
+          futures.toArray(new RedisFuture[futures.size()])
+        );
       }
       long end = System.currentTimeMillis();
       double duration = ((double) (end - start)) / 1000;
@@ -342,26 +327,29 @@ public class MainLettuce {
     }
 
     for (PipelineMode mode : PipelineMode.values()) {
-      COMMANDS_PER_TEST = 1000 * 1000;
+      COMMANDS_PER_TEST = 20 * 1000 * 1000;
+      PIPELINE_SIZE = 5;
+      scenarioPipelineTypes(mode);
+      COMMANDS_PER_TEST = 20 * 1000 * 1000;
       PIPELINE_SIZE = 10;
       scenarioPipelineTypes(mode);
       COMMANDS_PER_TEST = 30 * 1000 * 1000;
-      PIPELINE_SIZE = 100;
+      PIPELINE_SIZE = 20;
       scenarioPipelineTypes(mode);
       COMMANDS_PER_TEST = 50 * 1000 * 1000;
+      PIPELINE_SIZE = 50;
+      scenarioPipelineTypes(mode);
+      COMMANDS_PER_TEST = 50 * 1000 * 1000;
+      PIPELINE_SIZE = 100;
+      scenarioPipelineTypes(mode);
+      COMMANDS_PER_TEST = 100 * 1000 * 1000;
+      PIPELINE_SIZE = 200;
+      scenarioPipelineTypes(mode);
+      COMMANDS_PER_TEST = 100 * 1000 * 1000;
       PIPELINE_SIZE = 500;
       scenarioPipelineTypes(mode);
       COMMANDS_PER_TEST = 100 * 1000 * 1000;
       PIPELINE_SIZE = 1000;
-      scenarioPipelineTypes(mode);
-      COMMANDS_PER_TEST = 100 * 1000 * 1000;
-      PIPELINE_SIZE = 5000;
-      scenarioPipelineTypes(mode);
-      COMMANDS_PER_TEST = 100 * 1000 * 1000;
-      PIPELINE_SIZE = 10000;
-      scenarioPipelineTypes(mode);
-      COMMANDS_PER_TEST = 100 * 1000 * 1000;
-      PIPELINE_SIZE = 100000;
       scenarioPipelineTypes(mode);
     }
   }
