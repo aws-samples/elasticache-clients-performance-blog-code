@@ -4,7 +4,7 @@ const uniform = require("uniform-integer");
 const gaussian = require("gaussian");
 const guassianDistribution = gaussian(1024, 400 * 400); // mean = 1024, variance = 400*400
 
-const HOST = "blog.ftsojn.0001.usw2.cache.amazonaws.com";
+const HOST = "localhost";
 const URL = "redis://" + HOST;
 const PROB_GET = 0.8;
 SIZE_GET_KEY_SPACE = 375000000; // 3.75 million
