@@ -21,7 +21,7 @@ Steps to Reproduce Result:
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
     . ~/.nvm/nvm.sh
     nvm install node
-6) Install node redis by running: npm install redis
+6) Install node dependencies by running: npm install
 7) In blog.js replace "localhost" with "<Primary Endpoint>"
     where <Primary Endpoint> is the Primary Endpoint for the Elasticache instance you created in step 1
 8) From the command line: node <Path to blog.js>

@@ -1,0 +1,17 @@
+{
+  "name": "performanceblogcode",
+  "version": "1.0.0",
+  "description": "===Reproducing Test Results===",
+  "main": "blog.js",
+  "dependencies": {
+    "gaussian": "^1.2.0",
+    "redis": "3.1.1",
+    "uniform-integer": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
