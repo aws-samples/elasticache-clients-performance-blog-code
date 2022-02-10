@@ -19,10 +19,8 @@ Steps to Reproduce Result:
 4) Clone the github repository to the EC2 instance created in step 1 using git clone.
 5) In redispy.py replace "localhost" with "<Primary Endpoint>"
     where <Primary Endpoint> is the Primary Endpoint for the Elasticache instance you just created
-6) Install redispy and hiredis from pip by running:
-    sudo yum install pip
-    pip install redis
-    pip install hiredis
+6) Install dependencies by running:
+    pip install -r requirements.txt
 7) From the command line: python3 <Path to redispy.py>
 
 Cleaning Up:
