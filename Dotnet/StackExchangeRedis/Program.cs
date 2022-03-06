@@ -78,24 +78,30 @@ namespace StackExchangeRedis
             }
         }
 
+        private static Task getRandomTask(IDatabaseAsync source)
+        {
+            if (ShouldGet())
+            {
+                return source.StringGetAsync(GenerateKeyGet());
+            }
+            else
+            {
+                return source.StringSetAsync(GenerateKeySet(), new string('0', GeneratePayloadSize()));
+            }
+        }
+
+        private static Task getRandomTask()
+        {
+            return getRandomTask(db);
+        }
 
         private static void AsyncWorkerThread(long numCommands)
         {
             for (var i = 0; i < numCommands; i++)
             {
-                Task t;
-                if (ShouldGet())
-                {
-                    t = db.StringGetAsync(GenerateKeyGet());
-                }
-                else
-                {
-                    t = db.StringSetAsync(GenerateKeySet(), new string('0', GeneratePayloadSize()));
-                }
-                db.Wait(t);
+                db.Wait(getRandomTask());
             }
         }
-
 
         private static void MultiplexorTest(int numThreads, long totalCommands, Action<long> worker)
         {
@@ -135,14 +141,7 @@ namespace StackExchangeRedis
                 var tasks = new Task[pipelineSize];
                 for (var j = 0; j < pipelineSize; j++)
                 {
-                    if (ShouldGet())
-                    {
-                        tasks[j] = db.StringGetAsync(GenerateKeyGet());
-                    }
-                    else
-                    {
-                        tasks[j] = db.StringSetAsync(GenerateKeySet(), new string('0', GeneratePayloadSize()));
-                    }
+                    tasks[j] = getRandomTask();
                 }
                 db.WaitAll(tasks);
             }
@@ -165,14 +164,7 @@ namespace StackExchangeRedis
                 var tasks = new Task[batchSize];
                 for (var j = 0; j < batchSize; j++)
                 {
-                    if (ShouldGet())
-                    {
-                        tasks[j] = batch.StringGetAsync(GenerateKeyGet());
-                    }
-                    else
-                    {
-                        tasks[j] = batch.StringSetAsync(GenerateKeySet(), new string('0', GeneratePayloadSize()));
-                    }
+                    tasks[j] = getRandomTask(batch);
                 }
                 batch.Execute();
                 db.WaitAll(tasks);
@@ -199,35 +191,29 @@ namespace StackExchangeRedis
         private static IDatabase db = cm.GetDatabase();
         private static System.Random rndObj = new System.Random();
     
+        private static void runMultiplexorTests(int numThreads, long totalCommands) {
+            MultiplexorTest(numThreads, totalCommands, SyncWorkerThread);
+            MultiplexorTest(numThreads, totalCommands, AsyncWorkerThread);
+        }
+
+        private static void runBatchingTests(int batchSize, long totalCommands) {
+            BatchTest(batchSize, totalCommands);
+            PipelineTest(batchSize, totalCommands);
+        }
+
         static public void Main(string[] args)
         {
-            // sync multiplexor tests
-            MultiplexorTest(10, 15000000, SyncWorkerThread);
-            MultiplexorTest(20, 15000000, SyncWorkerThread);
-            MultiplexorTest(30, 15000000, SyncWorkerThread);
-            MultiplexorTest(40, 25000000, SyncWorkerThread);
-            MultiplexorTest(50, 30000000, SyncWorkerThread);
-            MultiplexorTest(60, 30000000, SyncWorkerThread);
+            runMultiplexorTests(10, 15000000);
+            runMultiplexorTests(20, 15000000);
+            runMultiplexorTests(30, 15000000);
+            runMultiplexorTests(40, 25000000);
+            runMultiplexorTests(50, 30000000);
+            runMultiplexorTests(60, 30000000);
 
-            // async multiplexor tests
-            MultiplexorTest(10, 15000000, AsyncWorkerThread);
-            MultiplexorTest(20, 15000000, AsyncWorkerThread);
-            MultiplexorTest(30, 15000000, AsyncWorkerThread);
-            MultiplexorTest(40, 25000000, AsyncWorkerThread);
-            MultiplexorTest(50, 30000000, AsyncWorkerThread);
-            MultiplexorTest(60, 3000000, AsyncWorkerThread);
-
-            // pipeline tests
-            PipelineTest(3, 3000000);
-            PipelineTest(10, 10000000);
-            PipelineTest(100, 40000000);
-            PipelineTest(1000, 60000000);
-
-            // // batching tests
-            BatchTest(3, 30000);
-            BatchTest(10, 100000);
-            BatchTest(100, 400000);
-            BatchTest(1000, 600000);
+            runBatchingTests(3,30000);
+            runBatchingTests(10, 100000);
+            runBatchingTests(100, 400000);
+            runBatchingTests(1000, 600000);
         }
     }
 }
