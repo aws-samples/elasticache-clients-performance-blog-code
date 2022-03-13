@@ -53,7 +53,7 @@ namespace StackExchangeRedis
                 var tasks = new Task[1000];
                 for (var j = 1; j <= 1000; j++)
                 {
-                    tasks[j-1] = batch.StringSetAsync((i * 1000 + j).ToString(), new string('0', GeneratePayloadSize()));
+                    tasks[j - 1] = batch.StringSetAsync((i * 1000 + j).ToString(), new string('0', GeneratePayloadSize()));
                 }
                 batch.Execute();
                 db.WaitAll(tasks);
@@ -63,7 +63,7 @@ namespace StackExchangeRedis
         }
 
 
-        private static void SyncWorkerThread(long numCommands)
+        private static void WorkerThread(long numCommands)
         {
             for (var i = 0; i < numCommands; i++)
             {
@@ -95,27 +95,18 @@ namespace StackExchangeRedis
             return getRandomTask(db);
         }
 
-        private static void AsyncWorkerThread(long numCommands)
-        {
-            for (var i = 0; i < numCommands; i++)
-            {
-                db.Wait(getRandomTask());
-            }
-        }
-
-        private static void MultiplexorTest(int numThreads, long totalCommands, Action<long> worker)
+        private static void MultiplexorTest(int numThreads, long totalCommands)
         {
             Debug.Assert(totalCommands % numThreads == 0, "Error totalCommands not divisible by numThreads");
             Warmup();
-            string api = worker.Method.Name == "SyncWorkerThread" ? "Sync" : "Async";
-            Console.WriteLine($"Starting {api} Multiplexor Test, Num Threads = {numThreads}");
+            Console.WriteLine($"Starting Multiplexor Test, Num Threads = {numThreads}");
             long commandsPerThread = totalCommands / numThreads;
             Stopwatch timer = new Stopwatch();
             timer.Restart();
             var threads = new List<Thread>();
             for (var i = 0; i < numThreads; i++)
             {
-                var t = new Thread(() => worker(commandsPerThread));
+                var t = new Thread(() => WorkerThread(commandsPerThread));
                 t.Start();
                 threads.Add(t);
             }
@@ -146,7 +137,7 @@ namespace StackExchangeRedis
                 db.WaitAll(tasks);
             }
             timer.Stop();
-            Console.WriteLine($"Completed Test, TPS: {(totalCommands*1000)/timer.ElapsedMilliseconds}");
+            Console.WriteLine($"Completed Test, TPS: {(totalCommands * 1000) / timer.ElapsedMilliseconds}");
         }
 
 
@@ -190,27 +181,28 @@ namespace StackExchangeRedis
         private static IServer server = cm.GetServer(Host, 6379);
         private static IDatabase db = cm.GetDatabase();
         private static System.Random rndObj = new System.Random();
-    
-        private static void runMultiplexorTests(int numThreads, long totalCommands) {
-            MultiplexorTest(numThreads, totalCommands, SyncWorkerThread);
-            MultiplexorTest(numThreads, totalCommands, AsyncWorkerThread);
+
+        private static void runMultiplexorTests(int numThreads, long totalCommands)
+        {
+            MultiplexorTest(numThreads, totalCommands);
         }
 
-        private static void runBatchingTests(int batchSize, long totalCommands) {
+        private static void runBatchingTests(int batchSize, long totalCommands)
+        {
             BatchTest(batchSize, totalCommands);
             PipelineTest(batchSize, totalCommands);
         }
 
         static public void Main(string[] args)
         {
-            runMultiplexorTests(10, 15000000);
-            runMultiplexorTests(20, 15000000);
-            runMultiplexorTests(30, 15000000);
-            runMultiplexorTests(40, 25000000);
-            runMultiplexorTests(50, 30000000);
-            runMultiplexorTests(60, 30000000);
-
-            runBatchingTests(3,30000);
+            MultiplexorTest(1, 15000000);
+            MultiplexorTest(10, 15000000);
+            MultiplexorTest(20, 15000000);
+            MultiplexorTest(30, 15000000);
+            MultiplexorTest(40, 25000000);
+            MultiplexorTest(50, 30000000);
+            MultiplexorTest(60, 30000000);
+            runBatchingTests(3, 30000);
             runBatchingTests(10, 100000);
             runBatchingTests(100, 400000);
             runBatchingTests(1000, 600000);
