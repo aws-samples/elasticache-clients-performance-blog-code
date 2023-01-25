@@ -2,7 +2,7 @@
 
 This repo hosts code samples used for the blog post:
 
-TODO add link
+[Blog post](https://aws.amazon.com/blogs/database/optimize-redis-client-performance-for-amazon-elasticache/)
 
 
 ## Security
